@@ -1,10 +1,8 @@
-module Blackjack exposing (Rank(..), Card, Hand, HandPoint(..), pointsForHand)
+module Blackjack exposing (Card(..), Hand, HandPoint(..), pointsForHand)
 
 import List.Extra
 
-type Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace
-
-type alias Card = { rank: Rank }
+type Card = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace
 
 type alias Hand = List Card
 
@@ -14,7 +12,7 @@ type HandPoint = InPlay Int | Bust
 
 pointsForCard : Card -> CardPoint
 pointsForCard card =
-  case card.rank of
+  case card of
     Two -> Hard 2
     Three -> Hard 3
     Four -> Hard 4

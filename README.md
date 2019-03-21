@@ -14,9 +14,9 @@ Here's example usage from the REPL
 
 ```
 > import Blackjack exposing (..)
-> pointsForHand [Card Ace, Card Seven]
+> pointsForHand [Ace, Seven]
 InPlay 18 : HandPoint
-> pointsForHand [Card Jack, Card Queen, Card King]
+> pointsForHand [Jack, Queen, King]
 Bust: HandPoint
 ```
 
@@ -26,7 +26,7 @@ I stole the idea of creating this from [Cameron Pressley's F# Blackjack](https:/
 Adding the points of two cards together works by generating the cartesian product of possible point values for each card and then adding all the pairs together. For example:
 
 ```
-Hand = [Card Ace, Card Ace]
+Hand = [Ace, Ace]
 PointsPerCard = [[1, 11], [1, 11]]
 PossiblePointValues = [2, 12, 12, 22]
 ```
@@ -34,7 +34,7 @@ PossiblePointValues = [2, 12, 12, 22]
 For hands with more than two cards, we use the same algorithm with a fold. Finally, to get the hand value, we take the list of possible values and grab the maximum at most 21. Example:
 
 ```
-Hand = [Card Ace, Card Ace, Card Eight]
+Hand = [Ace, Ace, Eight]
 PointsPerCard = [[1, 11], [1, 11], [8]]
 AfterFirstFoldStep = [[2, 12, 12, 22], [8]]
 PossiblePointValues = [10, 20, 20, 30]
