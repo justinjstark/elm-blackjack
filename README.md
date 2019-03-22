@@ -50,7 +50,7 @@ hand
     |> List.map pointsForCard
     |> List.foldr addPointToList []
     |> List.filter (\n -> n <= 21)
-    |> maximum
+    |> List.maximum
 ```
 
 This algorithm is overkill but it allowed me to expand my functional programming skills. Plus you can change the card values and it will still work. For example, you can make another card contribute to a soft hand such as `Two -> [1, 2]`. Or you can give a card more than two values like `Ace -> [1, 5, 11]` and the point calculations will still work.
