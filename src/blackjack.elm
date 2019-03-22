@@ -6,42 +6,45 @@ type Card = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack 
 
 type alias Hand = List Card
 
-type CardPoint = Hard Int | Soft (List Int)
+type HandPoint = Hard Int | Soft Int | Bust
 
-type HandPoint = InPlay Int | Bust
-
-pointsForCard : Card -> CardPoint
+pointsForCard : Card -> List Int
 pointsForCard card =
   case card of
-    Two -> Hard 2
-    Three -> Hard 3
-    Four -> Hard 4
-    Five -> Hard 5
-    Six -> Hard 6
-    Seven -> Hard 7
-    Eight -> Hard 8
-    Nine -> Hard 9
-    Ten -> Hard 10
-    Jack -> Hard 10
-    Queen -> Hard 10
-    King -> Hard 10
-    Ace -> Soft [1, 11]
+    Two -> [2]
+    Three -> [3]
+    Four -> [4]
+    Five -> [5]
+    Six -> [6]
+    Seven -> [7]
+    Eight -> [8]
+    Nine -> [9]
+    Ten -> [10]
+    Jack -> [10]
+    Queen -> [10]
+    King -> [10]
+    Ace -> [1, 11]
 
-getPointValuesAsList: CardPoint -> List Int
-getPointValuesAsList cardPoint =
-  case cardPoint of
-    Hard x -> [x]
-    Soft x -> x
+addPointsToList: List Int -> List Int -> List Int
+addPointsToList points list =
+  case list of
+    [] -> points
+    _ -> list
+      |> List.concatMap (\x -> List.map (\y -> x + y) points)
 
-addPointToList: CardPoint -> List Int -> List Int
-addPointToList cardPoint valueList =
-  let valueListForCard = getPointValuesAsList cardPoint
-  in case valueList of
-    [] -> valueListForCard
-    _ -> valueList
-      |> List.concatMap (\x -> List.map (\y -> x + y) valueListForCard)
-      |> List.Extra.unique
-      |> List.sort
+descending a b =
+  case compare a b of
+    LT -> GT
+    EQ -> EQ
+    GT -> LT
+
+getValidHandValues : Hand -> List Int
+getValidHandValues hand =
+  hand
+    |> List.map pointsForCard
+    |> List.foldr addPointsToList [0]
+    |> List.filter (\n -> n <= 21)
+    |> List.Extra.unique
 
 {-| Get the maximum point value of a hand.
 
@@ -50,13 +53,10 @@ addPointToList cardPoint valueList =
 -}
 pointsForHand : Hand -> HandPoint
 pointsForHand hand =
-  let
-    value =
-      hand
-      |> List.map pointsForCard
-      |> List.foldr addPointToList [0]
-      |> List.filter (\n -> n <= 21)
-      |> List.maximum
-  in case value of
-    Just n -> InPlay n
-    Nothing -> Bust
+  case hand of
+    [] -> Hard 0
+    h ->
+      case (h |> getValidHandValues |> List.sortWith descending) of
+        [] -> Bust
+        [n] -> Hard n
+        n :: ns -> Soft n

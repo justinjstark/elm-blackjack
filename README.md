@@ -14,15 +14,15 @@ Here's example usage from the REPL
 
 ```
 > import Blackjack exposing (..)
+> pointsForHand [Ten, Seven]
+Hard 17 : HandPoint
 > pointsForHand [Ace, Seven]
-InPlay 18 : HandPoint
+Soft 18 : HandPoint
 > pointsForHand [Jack, Queen, King]
 Bust: HandPoint
 ```
 
 ## How it works
-I stole the idea of creating this from [Cameron Pressley's F# Blackjack](https://github.com/cameronpresley/Blackjack) and similarly use Hard and Soft type constructors to represent card points.
-
 Adding the points of two cards together works by generating the cartesian product of possible point values for each card and then adding all the pairs together. For example:
 
 ```
@@ -31,26 +31,26 @@ PointsPerCard = [[1, 11], [1, 11]]
 PossiblePointValues = [2, 12, 12, 22]
 ```
 
-For hands with more than two cards, we use the same algorithm with a fold. Finally, to get the hand value, we take the list of possible values and grab the maximum at most 21. Example:
+For hands with more than two cards, we use the same algorithm with a fold. Then we remove any values greater than 21 and take the unique elements.
 
 ```
 Hand = [Ace, Ace, Eight]
 PointsPerCard = [[1, 11], [1, 11], [8]]
 AfterFirstFoldStep = [[2, 12, 12, 22], [8]]
-PossiblePointValues = [10, 20, 20, 30]
-FinalPointValue = 20
+AfterFold = [10, 20, 20, 30]
+ValidPointValues = [10, 20]
 ```
 
-Here's the exact algorithm:
+If there is more than one value in the list, the hand is soft. Finally, to get the hand value, we take the list of possible values and grab the maximum at most 21.
+
+The algorithm, without any checking for a soft hand, is basically this:
 
 ```elm
 hand
     |> List.map pointsForCard
     |> List.foldr addPointToList []
     |> List.filter (\n -> n <= 21)
-    |> List.maximum
+    |> maximum
 ```
 
-This algorithm is overkill but it allowed me to expand my functional programming skills. Plus you can change the card values and it will still work. For example, you can make another card soft such as `Two -> Soft [1, 2]`. Or you can give a card more than two soft values like `Ace -> Soft [1, 5, 11]` and the point calculations will still work.
-
-I realize I could have just used lists of possible card values rather than creating a CardPoint type, but using Hard and Soft injects some domain language into code and also served to make me more comfortable with Elm's pattern matching.
+This algorithm is overkill but it allowed me to expand my functional programming skills. Plus you can change the card values and it will still work. For example, you can make another card contribute to a soft hand such as `Two -> [1, 2]`. Or you can give a card more than two values like `Ace -> [1, 5, 11]` and the point calculations will still work.
