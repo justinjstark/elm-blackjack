@@ -29,7 +29,7 @@ addPointsToList: List Int -> List Int -> List Int
 addPointsToList points list =
   case list of
     [] -> points
-    _ -> list
+    ps -> ps
       |> List.concatMap (\x -> List.map (\y -> x + y) points)
 
 descending a b =
