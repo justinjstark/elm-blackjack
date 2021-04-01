@@ -46,9 +46,8 @@ getValidHandValues hand =
     |> List.filter (\n -> n <= 21)
     |> List.Extra.unique
 
-{-| Get the maximum point value of a hand.
-
-  pointsForHand [Card Ace, Card Ten] == InPlay 21
+{-| Get the best point value of a hand.
+  pointsForHand [Card Ace, Card Ten] == Soft 21
   pointsForHand [Card Ten, Card Jack, Card Queen] == Bust
 -}
 pointsForHand : Hand -> HandPoint
